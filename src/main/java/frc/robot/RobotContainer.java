@@ -55,13 +55,12 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-
-    new Button(m_controller:: getBButton).whenPressed(new SwerveAuto(m_drivetrainSubsystem, ));
+    new Button(m_controller:: getBButton).whenPressed(new SwerveAuto(m_drivetrainSubsystem, 4));
 
     // Back button zeros the gyroscope
     new Button(m_controller::getYButton)
             // No requirements because we don't need to interrupt anything
-            .whenPressed(m_drivetrainSubsystem::zeroGyroscope);
+            .whenPressed(m_drivetrainSubsystem::zeroGyroscope, m_drivetrainSubsystem);
   }
 
   /**
