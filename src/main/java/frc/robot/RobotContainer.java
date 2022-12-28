@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
+import frc.robot.commands.SwerveAuto;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
@@ -54,6 +55,9 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    new Button(m_controller:: getBButton).whenPressed(new SwerveAuto(m_drivetrainSubsystem, ));
+
     // Back button zeros the gyroscope
     new Button(m_controller::getYButton)
             // No requirements because we don't need to interrupt anything
