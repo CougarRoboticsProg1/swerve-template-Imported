@@ -9,7 +9,7 @@ public interface SwerveModule {
     double getSteerAngle();
 
     default SwerveModuleState getState() {
-        return new SwerveModuleState(getDriveVelocity(), Rotation2d.fromDegrees(getSteerAngle()));
+        return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getSteerAngle()));
     }
 
     void set(double driveVoltage, double steerAngle);

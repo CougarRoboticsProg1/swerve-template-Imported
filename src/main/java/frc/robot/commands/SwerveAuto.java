@@ -30,11 +30,12 @@ public class SwerveAuto extends CommandBase {
 
     @Override
     public void execute() {
-        if(getFPGATimestamp() - checkpointTime >= 2) {
-            swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(0, 3 * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.MAX_VOLTAGE, 0, new Rotation2d()));
+        if(getFPGATimestamp() - startTime < 1.5) {
+            swerve.drive(new ChassisSpeeds(0, 50, 0));
             checkpointTime = getFPGATimestamp();
-        } else if(getFPGATimestamp() - checkpointTime >= 2) {
-            swerve.drive(ChassisSpeeds.fromFieldRelativeSpeeds(3 * Constants.MAX_VELOCITY_METERS_PER_SECOND * Constants.MAX_VOLTAGE, 0, 10 * Math.PI, new Rotation2d(Math.PI)));
+        } else {
+            System.out.println("asdf");
+            swerve.drive(new ChassisSpeeds(50, 0, 0));
             checkpointTime = getFPGATimestamp();
         }
         

@@ -60,7 +60,7 @@ public final class Constants {
    * <p>
    * This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
    */
-  public static final double MAX_VOLTAGE = 12.0;
+  public static final double MAX_VOLTAGE = 10.0;
   // FIXME Measure the drivetrain's maximum velocity or calculate the theoretical.
   //  The formula for calculating the theoretical maximum velocity is:
   //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
@@ -103,12 +103,12 @@ public final class Constants {
                 kPhysicalMaxAngularSpeedRadiansPerSecond / 10;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3;
         public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
-        public static final double kPXController = 1.5;
-        public static final double kPYController = 1.5;
+        public static final double kPXController = 0.5;
+        public static final double kPYController = 0.5;
         public static final double kPThetaController = 3;
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
                 new TrapezoidProfile.Constraints(
-                        kMaxAngularSpeedRadiansPerSecond,
-                        kMaxAngularAccelerationRadiansPerSecondSquared);
+                        MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+                        MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 4);
 }

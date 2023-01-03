@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import frc.robot.Constants;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -51,8 +52,10 @@ public class DefaultDriveCommand extends CommandBase {
             );
         } else {
             m_drivetrainSubsystem.drive(
-            new ChassisSpeeds(m_translationXSupplier.getAsDouble(),
-                m_translationYSupplier.getAsDouble(), m_rotationSupplier.getAsDouble()));
+            new ChassisSpeeds(
+                m_translationXSupplier.getAsDouble(),
+                m_translationYSupplier.getAsDouble(), 
+                m_rotationSupplier.getAsDouble()));
         }
         
     }

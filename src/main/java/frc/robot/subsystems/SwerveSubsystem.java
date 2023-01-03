@@ -29,7 +29,7 @@ public class SwerveSubsystem extends SubsystemBase {
 	private final AHRS m_navx = new AHRS(SPI.Port.kMXP);
 	private final SwerveDriveOdometry m_odometer = new SwerveDriveOdometry(
 			Constants.m_kinematics,
-			new Rotation2d(0));
+			getGyroscopeRotation());
 
 	private final SwerveModule m_frontLeftModule;
 	private final SwerveModule m_frontRightModule;
@@ -142,8 +142,6 @@ public class SwerveSubsystem extends SubsystemBase {
 			}
 		}
 
-		SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
-
 		m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
 			states[0].angle.getRadians());
 		m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
@@ -156,36 +154,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
+
 		m_odometer.update(getGyroscopeRotation(), m_frontLeftModule.getState(), m_frontRightModule.getState(),
 				m_backLeftModule.getState(), m_backRightModule.getState());
 		SmartDashboard.putString("Robot Pose", getPose().toString());
 
 		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
 		setModuleStates(states);
-
-		// for (SwerveModuleState i : states) {
-		// 	if (i.speedMetersPerSecond < 0.001) {
-		// 		m_frontLeftModule.set(0, m_frontLeftModule.getSteerAngle());
-		// 		m_frontRightModule.set(0, m_frontRightModule.getSteerAngle());
-		// 		m_backLeftModule.set(0, m_backLeftModule.getSteerAngle());
-		// 		m_backRightModule.set(0, m_backRightModule.getSteerAngle());
-		// 	}
-		// }
-		// SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
-
-		// SmartDashboard.putString("front left state", states[0].toString());
-		// SmartDashboard.putString("front right state", states[1].toString());
-		// SmartDashboard.putString("back left state", states[2].toString());
-		// SmartDashboard.putString("back right state", states[3].toString());
-
-		// m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-		// 		states[0].angle.getRadians());
-		// m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-		// 		states[1].angle.getRadians());
-		// m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-		// 		states[2].angle.getRadians());
-		// m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
-		// 		states[3].angle.getRadians());
 	}
 
 	public void stop() {
