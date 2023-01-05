@@ -3,6 +3,8 @@ package frc.robot.swervelib.rev;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import frc.robot.swervelib.DriveController;
 import frc.robot.swervelib.DriveControllerFactory;
 import frc.robot.swervelib.ModuleConfiguration;
@@ -53,8 +55,8 @@ public final class NeoDriveControllerFactoryBuilder {
             checkNeoError(motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus0, 100), "Failed to set periodic status frame 0 rate");
             checkNeoError(motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus1, 20), "Failed to set periodic status frame 1 rate");
             checkNeoError(motor.setPeriodicFramePeriod(CANSparkMaxLowLevel.PeriodicFrame.kStatus2, 20), "Failed to set periodic status frame 2 rate");
-            // Set neutral mode to brake
-            motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+            // Set neutral mode to brake TODO
+            // motor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
             // Setup encoder
             RelativeEncoder encoder = motor.getEncoder();
@@ -80,9 +82,19 @@ public final class NeoDriveControllerFactoryBuilder {
             motor.setVoltage(voltage);
         }
 
+        public double getVoltage() {
+            return motor.getBusVoltage();
+        }
+
         @Override
         public double getStateVelocity() {
             return encoder.getVelocity();
+        }
+
+        @Override
+        public void setControllerMode(IdleMode mode) {
+            motor.setIdleMode(mode);
+            
         }
     }
 }

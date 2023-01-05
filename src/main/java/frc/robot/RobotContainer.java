@@ -6,9 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 import frc.robot.commands.DefaultDriveCommand;
@@ -42,7 +40,8 @@ public class RobotContainer {
             () -> -modifyAxis(m_controller.getLeftY()) * Constants.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getLeftX()) * Constants.MAX_VELOCITY_METERS_PER_SECOND,
             () -> -modifyAxis(m_controller.getRightX()) * Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-            () -> m_controller.getAButton()
+            () -> m_controller.getAButton(),
+            () -> m_controller.getRightTriggerAxis()
     ));
 
     // Configure the button bindings
@@ -56,8 +55,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new Button(m_controller:: getBButton).whenPressed(new SwerveAuto(m_drivetrainSubsystem, 4.25));
-
+    new Button(m_controller:: getBButton).whenPressed(new SwerveAuto(m_drivetrainSubsystem, 4));
     // Back button zeros the gyroscope
     new Button(m_controller::getYButton)
             // No requirements because we don't need to interrupt anything

@@ -6,6 +6,8 @@ import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import frc.robot.swervelib.DriveController;
 import frc.robot.swervelib.DriveControllerFactory;
 import frc.robot.swervelib.ModuleConfiguration;
@@ -103,6 +105,17 @@ public final class Falcon500DriveControllerFactoryBuilder {
         @Override
         public double getStateVelocity() {
             return motor.getSelectedSensorVelocity() * sensorVelocityCoefficient;
+        }
+
+        @Override
+        public double getVoltage() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void setControllerMode(IdleMode mode) {
+            throw new UnsupportedOperationException();
+            
         }
     }
 }

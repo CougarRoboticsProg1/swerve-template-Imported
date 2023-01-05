@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import frc.robot.Constants;
 import frc.robot.utils.*;
@@ -13,7 +15,6 @@ import frc.robot.swervelib.SwerveModule;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -40,25 +41,15 @@ public class SwerveSubsystem extends SubsystemBase {
 
 	public SwerveSubsystem() {
 		ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-		m_frontLeftModule = Mk4SwerveModuleHelper.createNeoFalcon500(
-				tab.getLayout("Front Left Module", BuiltInLayouts.kList)
-						.withSize(2, 4)
-						.withPosition(0, 0),
-				Mk4SwerveModuleHelper.GearRatio.L2,
-				FRONT_LEFT_MODULE_DRIVE_MOTOR,
-				FRONT_LEFT_MODULE_STEER_MOTOR,
-				FRONT_LEFT_MODULE_STEER_ENCODER,
-				FRONT_LEFT_MODULE_STEER_OFFSET);
-
-		m_frontRightModule = Mk4SwerveModuleHelper.createNeoFalcon500(
-				tab.getLayout("Front Right Module", BuiltInLayouts.kList)
-						.withSize(2, 4)
-						.withPosition(2, 0),
-				Mk4SwerveModuleHelper.GearRatio.L2,
-				FRONT_RIGHT_MODULE_DRIVE_MOTOR,
-				FRONT_RIGHT_MODULE_STEER_MOTOR,
-				FRONT_RIGHT_MODULE_STEER_ENCODER,
-				FRONT_RIGHT_MODULE_STEER_OFFSET);
+		m_backRightModule = Mk4SwerveModuleHelper.createNeoFalcon500(
+			tab.getLayout("Back Right Module", BuiltInLayouts.kList)
+					.withSize(2, 4)
+					.withPosition(6, 0),
+			Mk4SwerveModuleHelper.GearRatio.L2,
+			BACK_RIGHT_MODULE_DRIVE_MOTOR,
+			BACK_RIGHT_MODULE_STEER_MOTOR,
+			BACK_RIGHT_MODULE_STEER_ENCODER,
+			BACK_RIGHT_MODULE_STEER_OFFSET);
 
 		m_backLeftModule = Mk4SwerveModuleHelper.createNeoFalcon500(
 				tab.getLayout("Back Left Module", BuiltInLayouts.kList)
@@ -69,16 +60,35 @@ public class SwerveSubsystem extends SubsystemBase {
 				BACK_LEFT_MODULE_STEER_MOTOR,
 				BACK_LEFT_MODULE_STEER_ENCODER,
 				BACK_LEFT_MODULE_STEER_OFFSET);
-
-		m_backRightModule = Mk4SwerveModuleHelper.createNeoFalcon500(
-				tab.getLayout("Back Right Module", BuiltInLayouts.kList)
+		
+		m_frontRightModule = Mk4SwerveModuleHelper.createNeoFalcon500(
+				tab.getLayout("Front Right Module", BuiltInLayouts.kList)
 						.withSize(2, 4)
-						.withPosition(6, 0),
+						.withPosition(2, 0),
 				Mk4SwerveModuleHelper.GearRatio.L2,
-				BACK_RIGHT_MODULE_DRIVE_MOTOR,
-				BACK_RIGHT_MODULE_STEER_MOTOR,
-				BACK_RIGHT_MODULE_STEER_ENCODER,
-				BACK_RIGHT_MODULE_STEER_OFFSET);
+				FRONT_RIGHT_MODULE_DRIVE_MOTOR,
+				FRONT_RIGHT_MODULE_STEER_MOTOR,
+				FRONT_RIGHT_MODULE_STEER_ENCODER,
+				FRONT_RIGHT_MODULE_STEER_OFFSET);
+
+		m_frontLeftModule = Mk4SwerveModuleHelper.createNeoFalcon500(
+				tab.getLayout("Front Left Module", BuiltInLayouts.kList)
+						.withSize(2, 4)
+						.withPosition(0, 0),
+				Mk4SwerveModuleHelper.GearRatio.L2,
+				FRONT_LEFT_MODULE_DRIVE_MOTOR,
+				FRONT_LEFT_MODULE_STEER_MOTOR,
+				FRONT_LEFT_MODULE_STEER_ENCODER,
+				FRONT_LEFT_MODULE_STEER_OFFSET);
+
+		setRobotIdleMode(IdleMode.kCoast);
+	}
+
+	public void setRobotIdleMode(IdleMode mode) {
+		m_frontLeftModule.setControllerMode(mode);
+		m_frontRightModule.setControllerMode(mode);
+		m_backLeftModule.setControllerMode(mode);
+		m_backRightModule.setControllerMode(mode);
 	}
 
 	/**
@@ -150,17 +160,23 @@ public class SwerveSubsystem extends SubsystemBase {
 			states[2].angle.getRadians());
 		m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
 			states[3].angle.getRadians());
+		
 	  }
 
 	@Override
 	public void periodic() {
-
+		SmartDashboard.putNumber("Front Left Voltage", m_frontLeftModule.getVoltage());
+		SmartDashboard.putNumber("Front Right Voltage", m_frontRightModule.getVoltage());
+		SmartDashboard.putNumber("Back Left Voltage", m_backLeftModule.getVoltage());
+		SmartDashboard.putNumber("Back Right Voltage", m_backRightModule.getVoltage());
 		m_odometer.update(getGyroscopeRotation(), m_frontLeftModule.getState(), m_frontRightModule.getState(),
 				m_backLeftModule.getState(), m_backRightModule.getState());
 		SmartDashboard.putString("Robot Pose", getPose().toString());
 
 		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
 		setModuleStates(states);
+		
+		SmartDashboard.putNumber("Front Left Angle", m_frontLeftModule.getSteerAngle());
 	}
 
 	public void stop() {

@@ -1,6 +1,7 @@
 package frc.robot.swervelib;
 
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
@@ -48,6 +49,11 @@ public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
         }
 
         @Override
+        public void setControllerMode(IdleMode mode) {
+            driveController.setControllerMode(mode);
+        }
+
+        @Override
         public double getDriveVelocity() {
             return driveController.getStateVelocity();
         }
@@ -55,6 +61,11 @@ public class SwerveModuleFactory<DriveConfiguration, SteerConfiguration> {
         @Override
         public double getSteerAngle() {
             return steerController.getStateAngle();
+        }
+
+        @Override
+        public double getVoltage() {
+            return driveController.getVoltage();
         }
 
         @Override

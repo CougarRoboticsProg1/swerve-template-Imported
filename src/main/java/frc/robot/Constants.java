@@ -32,12 +32,10 @@ public final class Constants {
      */
     public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(25.5); // FIXME Measure and set wheelbase
 
-    public static final int DRIVETRAIN_PIGEON_ID = 0; // FIXME Set Pigeon ID
-
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1; // FIXME Set front left module drive motor ID
     public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 3; // FIXME Set front left module steer motor ID
     public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 1; // FIXME Set front left steer encoder ID
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(356.92382812500006 + 180); // FIXME Measure and set front left steer offset
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(177.626953125); // FIXME Measure and set front left steer offset
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 8; // FIXME Set front right drive motor ID
     public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 2; // FIXME Set front right steer motor ID
@@ -60,13 +58,7 @@ public final class Constants {
    * <p>
    * This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
    */
-  public static final double MAX_VOLTAGE = 10.0;
-  // FIXME Measure the drivetrain's maximum velocity or calculate the theoretical.
-  //  The formula for calculating the theoretical maximum velocity is:
-  //   <Motor free speed RPM> / 60 * <Drive reduction> * <Wheel diameter meters> * pi
-  //  By default this value is setup for a Mk3 standard module using Falcon500s to drive.
-//    An example of this constant for a Mk4 L2 module with NEOs to drive is:
-//     5880.0 / 60.0 / SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI
+  public static final double MAX_VOLTAGE = 5.0;
   /**
    * The maximum velocity of the robot in meters per second.
    * <p>
@@ -109,6 +101,6 @@ public final class Constants {
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
                 new TrapezoidProfile.Constraints(
-                        MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+                        MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 2,
                         MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND / 4);
 }

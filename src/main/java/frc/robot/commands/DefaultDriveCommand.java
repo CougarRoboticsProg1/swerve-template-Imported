@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import frc.robot.Constants;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -9,6 +8,8 @@ import frc.robot.subsystems.SwerveSubsystem;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+
 public class DefaultDriveCommand extends CommandBase {
     private final SwerveSubsystem m_drivetrainSubsystem;
 
@@ -16,6 +17,7 @@ public class DefaultDriveCommand extends CommandBase {
     private final DoubleSupplier m_translationYSupplier;
     private final DoubleSupplier m_rotationSupplier;
     private final BooleanSupplier m_fieldRelativeSupplier;
+    private final DoubleSupplier m_brakeSupplier;
 
     private boolean isFieldRelative;
 
@@ -23,12 +25,14 @@ public class DefaultDriveCommand extends CommandBase {
                                DoubleSupplier translationXSupplier,
                                DoubleSupplier translationYSupplier,
                                DoubleSupplier rotationSupplier,
-                               BooleanSupplier fieldRelativeSupplier) {
+                               BooleanSupplier fieldRelativeSupplier, 
+                               DoubleSupplier m_brakeSupplier) {
         this.m_drivetrainSubsystem = drivetrainSubsystem;
         this.m_translationXSupplier = translationXSupplier;
         this.m_translationYSupplier = translationYSupplier;
         this.m_rotationSupplier = rotationSupplier;
         this.m_fieldRelativeSupplier = fieldRelativeSupplier;
+        this.m_brakeSupplier = m_brakeSupplier;
         isFieldRelative = false;
 
         addRequirements(drivetrainSubsystem);
@@ -41,22 +45,29 @@ public class DefaultDriveCommand extends CommandBase {
             isFieldRelative = !isFieldRelative;
         }
         SmartDashboard.putNumber("Gyro", m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
-        if(isFieldRelative) {
-            m_drivetrainSubsystem.drive(
-                ChassisSpeeds.fromFieldRelativeSpeeds(
-                        m_translationXSupplier.getAsDouble(),
-                        m_translationYSupplier.getAsDouble(),
-                        m_rotationSupplier.getAsDouble(),
-                        m_drivetrainSubsystem.getGyroscopeRotation()
-                )
-            );
+        if(m_brakeSupplier.getAsDouble() == 0) {
+            m_drivetrainSubsystem.setRobotIdleMode(IdleMode.kCoast);
+            if(isFieldRelative) {
+                m_drivetrainSubsystem.drive(
+                    ChassisSpeeds.fromFieldRelativeSpeeds(
+                            m_translationXSupplier.getAsDouble(),
+                            m_translationYSupplier.getAsDouble(),
+                            m_rotationSupplier.getAsDouble(),
+                            m_drivetrainSubsystem.getGyroscopeRotation()
+                    )
+                );
+            } else {
+                m_drivetrainSubsystem.drive(
+                new ChassisSpeeds(
+                    m_translationXSupplier.getAsDouble(),
+                    m_translationYSupplier.getAsDouble(), 
+                    m_rotationSupplier.getAsDouble()));
+            }
         } else {
-            m_drivetrainSubsystem.drive(
-            new ChassisSpeeds(
-                m_translationXSupplier.getAsDouble(),
-                m_translationYSupplier.getAsDouble(), 
-                m_rotationSupplier.getAsDouble()));
+           m_drivetrainSubsystem.setRobotIdleMode(IdleMode.kBrake);
+           m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, 0));
         }
+        
         
     }
 
