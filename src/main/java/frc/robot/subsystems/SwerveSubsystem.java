@@ -27,6 +27,13 @@ import static frc.robot.Constants.*;
 
 public class SwerveSubsystem extends SubsystemBase {
 
+	    /**
+   * The maximum voltage that will be delivered to the drive motors.
+   * <p>
+   * This can be reduced to cap the robot's maximum speed. Typically, this is useful during initial testing of the robot.
+   */
+  public static double MAX_VOLTAGE = 5.0;
+
 	private final AHRS m_navx = new AHRS(SPI.Port.kMXP);
 	private final SwerveDriveOdometry m_odometer = new SwerveDriveOdometry(
 			Constants.m_kinematics,
@@ -91,6 +98,20 @@ public class SwerveSubsystem extends SubsystemBase {
 		m_backRightModule.setControllerMode(mode);
 	}
 
+	public static void increaseVoltage() {
+		MAX_VOLTAGE+=1;
+		if(MAX_VOLTAGE > 5) {
+			MAX_VOLTAGE = 5;
+		}
+	}
+
+	public static void decreaseVoltage() {
+		MAX_VOLTAGE-=1;
+		if(MAX_VOLTAGE < 1) {
+			MAX_VOLTAGE = 1;
+		}
+	}
+
 	/**
 	 * Sets the gyroscope angle to zero. This can be used to set the direction the
 	 * robot is currently facing to the
@@ -144,7 +165,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
 	public void setModuleStates(SwerveModuleState[] states) {
 		for (SwerveModuleState i : states) {
-			if (i.speedMetersPerSecond < 0.001) {
+			if (i.speedMetersPerSecond < 0.003) {
 				m_frontLeftModule.set(0, m_frontLeftModule.getSteerAngle());
 				m_frontRightModule.set(0, m_frontRightModule.getSteerAngle());
 				m_backLeftModule.set(0, m_backLeftModule.getSteerAngle());
@@ -152,31 +173,34 @@ public class SwerveSubsystem extends SubsystemBase {
 			}
 		}
 
-		m_frontLeftModule.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+		m_frontLeftModule.set((states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE) 
+			* Math.abs(Math.cos(m_frontLeftModule.angleError(states[0].angle.getRadians()))),
 			states[0].angle.getRadians());
-		m_frontRightModule.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+		m_frontRightModule.set((states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE) 
+			* Math.abs(Math.cos(m_frontRightModule.angleError(states[1].angle.getRadians()))),
 			states[1].angle.getRadians());
-		m_backLeftModule.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+		m_backLeftModule.set((states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE)
+			* Math.abs(Math.cos(m_backLeftModule.angleError(states[2].angle.getRadians()))),
 			states[2].angle.getRadians());
-		m_backRightModule.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE,
+		m_backRightModule.set((states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE)
+			* Math.abs(Math.cos(m_backRightModule.angleError(states[3].angle.getRadians()))),
 			states[3].angle.getRadians());
 		
 	  }
 
 	@Override
 	public void periodic() {
-		SmartDashboard.putNumber("Front Left Voltage", m_frontLeftModule.getVoltage());
-		SmartDashboard.putNumber("Front Right Voltage", m_frontRightModule.getVoltage());
-		SmartDashboard.putNumber("Back Left Voltage", m_backLeftModule.getVoltage());
-		SmartDashboard.putNumber("Back Right Voltage", m_backRightModule.getVoltage());
+		// SmartDashboard.putNumber("Front Left Voltage", m_frontLeftModule.getVoltage());
+		// SmartDashboard.putNumber("Front Right Voltage", m_frontRightModule.getVoltage());
+		// SmartDashboard.putNumber("Back Left Voltage", m_backLeftModule.getVoltage());
+		// SmartDashboard.putNumber("Back Right Voltage", m_backRightModule.getVoltage());
 		m_odometer.update(getGyroscopeRotation(), m_frontLeftModule.getState(), m_frontRightModule.getState(),
 				m_backLeftModule.getState(), m_backRightModule.getState());
-		SmartDashboard.putString("Robot Pose", getPose().toString());
-
+		// SmartDashboard.putString("Robot Pose", getPose().toString());
+		
 		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
 		setModuleStates(states);
 		
-		SmartDashboard.putNumber("Front Left Angle", m_frontLeftModule.getSteerAngle());
 	}
 
 	public void stop() {

@@ -25,4 +25,4 @@ pluginManagement {
         }
     }
 }
-include 'swervelib'
+include 'scripteditor'

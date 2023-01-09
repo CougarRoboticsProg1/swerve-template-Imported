@@ -28,12 +28,12 @@ public class SwerveAuto extends CommandBase {
   @Override
   public void execute() {
     double elapsedTime = getFPGATimestamp() - checkpointTime;
-    if (elapsedTime < 1) {
+    if (elapsedTime < 1.1) {
       swerve.drive(new ChassisSpeeds(0, 200, 0));
-    } else if (elapsedTime < 2) {
+    } else if (elapsedTime < 2.3) {
       swerve.drive(new ChassisSpeeds(200, 0, 0));
-    } else if (elapsedTime < 3) {
-      swerve.drive(new ChassisSpeeds(40, 0, -360));
+    }  else {
+      swerve.drive(new ChassisSpeeds(0, 0, 0));
     }
   }
 

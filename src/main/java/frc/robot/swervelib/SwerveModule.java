@@ -10,6 +10,8 @@ public interface SwerveModule {
 
     double getSteerAngle();
 
+    double angleError(double targetAngle);
+
     default SwerveModuleState getState() {
         return new SwerveModuleState(getDriveVelocity(), new Rotation2d(getSteerAngle()));
     }

@@ -18,6 +18,8 @@ public class DefaultDriveCommand extends CommandBase {
     private final DoubleSupplier m_rotationSupplier;
     private final BooleanSupplier m_fieldRelativeSupplier;
     private final DoubleSupplier m_brakeSupplier;
+    private final BooleanSupplier m_increaseSpeedSupplier;
+    private final BooleanSupplier m_decreaseSpeedSupplier;
 
     private boolean isFieldRelative;
 
@@ -26,7 +28,9 @@ public class DefaultDriveCommand extends CommandBase {
                                DoubleSupplier translationYSupplier,
                                DoubleSupplier rotationSupplier,
                                BooleanSupplier fieldRelativeSupplier, 
-                               DoubleSupplier m_brakeSupplier) {
+                               DoubleSupplier m_brakeSupplier, 
+                               BooleanSupplier m_increaesSpeedSupplier,
+                               BooleanSupplier m_decreaseSpeedSuppliuer) {
         this.m_drivetrainSubsystem = drivetrainSubsystem;
         this.m_translationXSupplier = translationXSupplier;
         this.m_translationYSupplier = translationYSupplier;
@@ -34,7 +38,8 @@ public class DefaultDriveCommand extends CommandBase {
         this.m_fieldRelativeSupplier = fieldRelativeSupplier;
         this.m_brakeSupplier = m_brakeSupplier;
         isFieldRelative = false;
-
+        this.m_increaseSpeedSupplier = m_increaesSpeedSupplier;
+        this.m_decreaseSpeedSupplier = m_decreaseSpeedSuppliuer;
         addRequirements(drivetrainSubsystem);
     }
 
@@ -44,7 +49,13 @@ public class DefaultDriveCommand extends CommandBase {
         if(m_fieldRelativeSupplier.getAsBoolean()) {
             isFieldRelative = !isFieldRelative;
         }
-        SmartDashboard.putNumber("Gyro", m_drivetrainSubsystem.getGyroscopeRotation().getDegrees());
+        if(m_increaseSpeedSupplier.getAsBoolean()) {
+            SwerveSubsystem.increaseVoltage();
+        }
+        if(m_decreaseSpeedSupplier.getAsBoolean()) {
+            SwerveSubsystem.decreaseVoltage();
+        }
+        SmartDashboard.putBoolean("isFieldRelative", isFieldRelative);
         if(m_brakeSupplier.getAsDouble() == 0) {
             m_drivetrainSubsystem.setRobotIdleMode(IdleMode.kCoast);
             if(isFieldRelative) {
