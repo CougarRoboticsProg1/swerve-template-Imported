@@ -5,12 +5,10 @@
 package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import frc.robot.Constants;
 import frc.robot.utils.*;
-import frc.robot.swervelib.Mk4SwerveModuleHelper;
 import frc.robot.swervelib.SwerveModule;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -20,7 +18,6 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.*;
@@ -48,41 +45,37 @@ public class SwerveSubsystem extends SubsystemBase {
 
 	public SwerveSubsystem() {
 		ShuffleboardTab tab = Shuffleboard.getTab("Drivetrain");
-		m_backRightModule = Mk4SwerveModuleHelper.createNeoFalcon500(
+		m_backRightModule = new SwerveModule(
 			tab.getLayout("Back Right Module", BuiltInLayouts.kList)
 					.withSize(2, 4)
 					.withPosition(6, 0),
-			Mk4SwerveModuleHelper.GearRatio.L2,
 			BACK_RIGHT_MODULE_DRIVE_MOTOR,
 			BACK_RIGHT_MODULE_STEER_MOTOR,
 			BACK_RIGHT_MODULE_STEER_ENCODER,
 			BACK_RIGHT_MODULE_STEER_OFFSET);
-
-		m_backLeftModule = Mk4SwerveModuleHelper.createNeoFalcon500(
+		
+		m_backLeftModule = new SwerveModule(
 				tab.getLayout("Back Left Module", BuiltInLayouts.kList)
 						.withSize(2, 4)
 						.withPosition(4, 0),
-				Mk4SwerveModuleHelper.GearRatio.L2,
 				BACK_LEFT_MODULE_DRIVE_MOTOR,
 				BACK_LEFT_MODULE_STEER_MOTOR,
 				BACK_LEFT_MODULE_STEER_ENCODER,
 				BACK_LEFT_MODULE_STEER_OFFSET);
 		
-		m_frontRightModule = Mk4SwerveModuleHelper.createNeoFalcon500(
+		m_frontRightModule = new SwerveModule(
 				tab.getLayout("Front Right Module", BuiltInLayouts.kList)
 						.withSize(2, 4)
 						.withPosition(2, 0),
-				Mk4SwerveModuleHelper.GearRatio.L2,
 				FRONT_RIGHT_MODULE_DRIVE_MOTOR,
 				FRONT_RIGHT_MODULE_STEER_MOTOR,
 				FRONT_RIGHT_MODULE_STEER_ENCODER,
 				FRONT_RIGHT_MODULE_STEER_OFFSET);
 
-		m_frontLeftModule = Mk4SwerveModuleHelper.createNeoFalcon500(
+		m_frontLeftModule = new SwerveModule(
 				tab.getLayout("Front Left Module", BuiltInLayouts.kList)
 						.withSize(2, 4)
 						.withPosition(0, 0),
-				Mk4SwerveModuleHelper.GearRatio.L2,
 				FRONT_LEFT_MODULE_DRIVE_MOTOR,
 				FRONT_LEFT_MODULE_STEER_MOTOR,
 				FRONT_LEFT_MODULE_STEER_ENCODER,

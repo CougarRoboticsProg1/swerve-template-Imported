@@ -2,11 +2,11 @@ package frc.robot.swervelib.ctre;
 
 import java.util.Objects;
 
-public class Falcon500SteerConfiguration<EncoderConfiguration> {
+public class Falcon500SteerConfiguration {
     private final int motorPort;
-    private final EncoderConfiguration encoderConfiguration;
+    private final CanCoderAbsoluteConfiguration encoderConfiguration;
 
-    public Falcon500SteerConfiguration(int motorPort, EncoderConfiguration encoderConfiguration) {
+    public Falcon500SteerConfiguration(int motorPort, CanCoderAbsoluteConfiguration encoderConfiguration) {
         this.motorPort = motorPort;
         this.encoderConfiguration = encoderConfiguration;
     }
@@ -15,7 +15,7 @@ public class Falcon500SteerConfiguration<EncoderConfiguration> {
         return motorPort;
     }
 
-    public EncoderConfiguration getEncoderConfiguration() {
+    public CanCoderAbsoluteConfiguration getEncoderConfiguration() {
         return encoderConfiguration;
     }
 
@@ -23,7 +23,7 @@ public class Falcon500SteerConfiguration<EncoderConfiguration> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Falcon500SteerConfiguration<?> that = (Falcon500SteerConfiguration<?>) o;
+        Falcon500SteerConfiguration that = (Falcon500SteerConfiguration) o;
         return getMotorPort() == that.getMotorPort() && getEncoderConfiguration().equals(that.getEncoderConfiguration());
     }
 

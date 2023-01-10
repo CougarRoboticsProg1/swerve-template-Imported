@@ -1,13 +1,32 @@
 package frc.robot.swervelib;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 
-public interface DriveController {
-    void setReferenceVoltage(double voltage);
+public class DriveController {
+    private final CANSparkMax motor;
+    private final RelativeEncoder encoder;
 
-    double getVoltage();
+    public DriveController(CANSparkMax motor, RelativeEncoder encoder) {
+            this.motor = motor;
+            this.encoder = encoder;
+        }
 
-    void setControllerMode(IdleMode mode);
+    public void setReferenceVoltage(double voltage) {
+        motor.setVoltage(voltage);
+    }
 
-    double getStateVelocity();
+    public double getVoltage() {
+        return motor.getBusVoltage();
+    }
+
+    public double getStateVelocity() {
+        return encoder.getVelocity();
+    }
+
+    public void setControllerMode(IdleMode mode) {
+        motor.setIdleMode(mode);
+
+    }
 }

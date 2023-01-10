@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import frc.robot.swervelib.SdsModuleConfigurations;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -32,25 +31,37 @@ public final class Constants {
      */
     public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(25.5); // FIXME Measure and set wheelbase
 
-    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1; // FIXME Set front left module drive motor ID
-    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 3; // FIXME Set front left module steer motor ID
-    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 1; // FIXME Set front left steer encoder ID
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(177.626953125 + 1.494140625); // FIXME Measure and set front left steer offset
+    public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
+    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 3; 
+    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 1;
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(177.626953125 + 1.494140625); 
 
-    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 8; // FIXME Set front right drive motor ID
-    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 2; // FIXME Set front right steer motor ID
-    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 3; // FIXME Set front right steer encoder ID
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(269.12109375 - 1.93359375); // FIXME Measure and set front right steer offset
+    public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 8; 
+    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 2;
+    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 3;
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(269.12109375 - 1.93359375);
 
-    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 14; // FIXME Set back left drive motor ID
-    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 4; // FIXME Set back left steer motor ID
-    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 2; // FIXME Set back left steer encoder ID
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(358.41796875 + 180 + 0.3515625); // FIXME Measure and set back left steer offset
+    public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 14;
+    public static final int BACK_LEFT_MODULE_STEER_MOTOR = 4;
+    public static final int BACK_LEFT_MODULE_STEER_ENCODER = 2; 
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(358.41796875 + 180 + 0.3515625);
 
-    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 2; // FIXME Set back right drive motor ID
-    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 1; // FIXME Set back right steer motor ID
-    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 4; // FIXME Set back right steer encoder ID
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(240.54565429687497 + 2.4609375); // FIXME Measure and set back right steer offset
+    public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 2;
+    public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 1;
+    public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 4;
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(240.54565429687497 + 2.4609375);
+
+    //Module Constants
+    public static final double wheelDiameter = 0.10033;
+    public static final double driveReduction = (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0);
+    public static final boolean driveInverted = true;
+    public static final double steerReduction = (15.0 / 32.0) * (10.0 / 60.0);
+    public static final boolean steerInverted = true;
+
+    //Mk4 Module Configuration
+    public static double nominalVoltage = 12.0;
+    public static double driveCurrentLimit = 20.0;
+    public static double steerCurrentLimit = 20.0;
 
 
   /**
@@ -58,7 +69,7 @@ public final class Constants {
    * <p>
    * This is a measure of how fast the robot should be able to drive in a straight line.
    */
-  public static final double MAX_VELOCITY_METERS_PER_SECOND = 5880.0 / 60.0 / SdsModuleConfigurations.MK4_L2.getDriveReduction() * SdsModuleConfigurations.MK4_L2.getWheelDiameter() * Math.PI;
+  public static final double MAX_VELOCITY_METERS_PER_SECOND = 5880.0 / 60.0 / driveReduction * wheelDiameter * Math.PI;
   /**
    * The maximum angular velocity of the robot in radians per second.
    * <p>

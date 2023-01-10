@@ -33,27 +33,8 @@ public class CanCoderFactoryBuilder {
 
             CtreUtils.checkCtreError(encoder.setStatusFramePeriod(CANCoderStatusFrame.SensorData, periodMilliseconds, 250), "Failed to configure CANCoder update rate");
 
-            return new EncoderImplementation(encoder);
+            return new AbsoluteEncoder(encoder);
         };
-    }
-
-    private static class EncoderImplementation implements AbsoluteEncoder {
-        private final CANCoder encoder;
-
-        private EncoderImplementation(CANCoder encoder) {
-            this.encoder = encoder;
-        }
-
-        @Override
-        public double getAbsoluteAngle() {
-            double angle = Math.toRadians(encoder.getAbsolutePosition());
-            angle %= 2.0 * Math.PI;
-            if (angle < 0.0) {
-                angle += 2.0 * Math.PI;
-            }
-
-            return angle;
-        }
     }
 
     public enum Direction {
