@@ -57,12 +57,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_robotContainer.getCougarScriptReader().importScript("IPrayForMySanity.json").schedule();
-    
-
-    // schedule the autonomous command (example)
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+    // m_robotContainer.getAutonomousCommand().schedule();
   }
 
   /** This function is called periodically during autonomous. */

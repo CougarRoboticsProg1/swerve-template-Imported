@@ -8,8 +8,6 @@ import frc.robot.subsystems.SwerveSubsystem;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-import com.revrobotics.CANSparkMax.IdleMode;
-
 public class DefaultDriveCommand extends CommandBase {
     private final SwerveSubsystem m_drivetrainSubsystem;
 
@@ -57,7 +55,7 @@ public class DefaultDriveCommand extends CommandBase {
         }
         SmartDashboard.putBoolean("isFieldRelative", isFieldRelative);
         if(m_brakeSupplier.getAsDouble() == 0) {
-            m_drivetrainSubsystem.setRobotIdleMode(IdleMode.kCoast);
+            // m_drivetrainSubsystem.setRobotIdleMode(IdleMode.kCoast);
             if(isFieldRelative) {
                 m_drivetrainSubsystem.drive(
                     ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -75,15 +73,10 @@ public class DefaultDriveCommand extends CommandBase {
                     m_rotationSupplier.getAsDouble()));
             }
         } else {
-           m_drivetrainSubsystem.setRobotIdleMode(IdleMode.kBrake);
+        //    m_drivetrainSubsystem.setRobotIdleMode(IdleMode.kBrake);
            m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, 0));
         }
         
         
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        m_drivetrainSubsystem.drive(new ChassisSpeeds(0.0, 0.0, 0.0));
     }
 }

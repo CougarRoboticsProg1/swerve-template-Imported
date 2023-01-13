@@ -27,6 +27,9 @@ public class DriveController {
 
     public void setControllerMode(IdleMode mode) {
         motor.setIdleMode(mode);
+    }
 
+    public void setRampRate(double rate) {
+        motor.setOpenLoopRampRate(rate);
     }
 }

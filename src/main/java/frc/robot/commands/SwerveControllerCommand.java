@@ -44,7 +44,6 @@ public class SwerveControllerCommand extends CommandBase {
   private final HolonomicDriveController m_controller;
   private final Consumer<SwerveModuleState[]> m_outputModuleStates;
   private final Supplier<Rotation2d> m_desiredRotation;
-  private final SwerveSubsystem m_swerveSubsystem;
 
   /**
    * Constructs a new SwerveControllerCommand that when executed will follow the provided
@@ -92,9 +91,6 @@ public class SwerveControllerCommand extends CommandBase {
 
     m_desiredRotation =
         requireNonNullParam(desiredRotation, "desiredRotation", "SwerveControllerCommand");
-
-    m_swerveSubsystem =
-        requireNonNullParam(swerveDrivetrain, "swerveDrivetrain", "SwerveControllerCommand");
 
     addRequirements(swerveDrivetrain);
   }
@@ -159,20 +155,21 @@ public class SwerveControllerCommand extends CommandBase {
 
     ChassisSpeeds targetChassisSpeeds =
         m_controller.calculate(m_pose.get(), desiredState, m_desiredRotation.get());
-    var targetModuleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
-    //TODO
-    // m_swerveSubsystem.setHeadingSpeed(m_controller.getThetaFF() * (180 / Math.PI));
+    SwerveModuleState[] targetModuleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
 
+    // for (SwerveModuleState i : targetModuleStates) {
+    //   // System.out.println("speed: " + i.speedMetersPerSecond + " angle:" + i.angle.getDegrees());
+    // }
     m_outputModuleStates.accept(targetModuleStates);
   }
 
-  @Override
-  public void end(boolean interrupted) {
-    m_timer.stop();
-  }
+  // @Override
+  // public void end(boolean interrupted) {
+  //   m_timer.stop();
+  // }
 
-  @Override
-  public boolean isFinished() {
-    return m_timer.hasElapsed(m_trajectory.getTotalTimeSeconds());
-  }
+  // @Override
+  // public boolean isFinished() {
+  //   return m_timer.hasElapsed(m_trajectory.getTotalTimeSeconds());
+  // }
 }

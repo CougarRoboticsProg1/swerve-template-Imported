@@ -2,8 +2,6 @@ package frc.robot.swervelib;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import org.opencv.calib3d.StereoBM;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -20,7 +18,7 @@ public class SwerveModule {
     public SwerveModule(ShuffleboardLayout container, int driveMotorPort,
     int steerMotorPort,
     int steerEncoderPort,
-    double steerOffset) {
+    double steerOffset, double kp, double ki, double kd) {
         this.driveController = new DriveControllerFactory()
         .withVoltageCompensation().withCurrentLimit().create(
                 container,
@@ -29,7 +27,7 @@ public class SwerveModule {
         this.steerController = new SteerControllerFactory(new CanCoderFactoryBuilder()
         .withReadingUpdatePeriod(100)
         .build()).withVoltageCompensation(Constants.nominalVoltage)
-        .withPidConstants(0.2, 0.0, 0.1)
+        .withPidConstants(kp, ki, kd)
         .withCurrentLimit(Constants.steerCurrentLimit).create(
                 container,
                 new Falcon500SteerConfiguration(
@@ -37,6 +35,10 @@ public class SwerveModule {
                         new CanCoderAbsoluteConfiguration(steerEncoderPort, steerOffset)
                 )
         );
+    }
+
+    public void setRampRate(double rate) {
+        driveController.setRampRate(rate);
     }
 
     public void setControllerMode(IdleMode mode) {
@@ -67,6 +69,8 @@ public class SwerveModule {
         }
         return steerAngle - getSteerAngle();
     }
+
+    
 
     public void set(double driveVoltage, double steerAngle) {
         steerAngle %= (2.0 * Math.PI);

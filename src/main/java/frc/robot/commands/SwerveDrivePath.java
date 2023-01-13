@@ -39,11 +39,10 @@ public class SwerveDrivePath extends CommandBase {
             wayPoints.set(i, wayPoints.get(i).plus(
             new Translation2d(-x + y, -y + x)));
             wayPoints.set(i, wayPoints.get(i).times(0.30478512648));
-            System.out.println(wayPoints.get(i).toString());
         }
 
-        startPose = new Pose2d(wayPoints.get(0).getX(), wayPoints.get(0).getY(), new Rotation2d(startAngle));
-        endPose = new Pose2d(wayPoints.get(wayPoints.size()-1).getX(), wayPoints.get(wayPoints.size()-1).getY() , new Rotation2d(endAngle));
+        startPose = new Pose2d(wayPoints.get(0).getX(), wayPoints.get(0).getY(), Rotation2d.fromDegrees(startAngle));
+        endPose = new Pose2d(wayPoints.get(wayPoints.size()-1).getX(), wayPoints.get(wayPoints.size()-1).getY() , Rotation2d.fromDegrees(endAngle));
 
         wayPoints.remove(0);
         wayPoints.remove(wayPoints.size()-1);
@@ -53,11 +52,11 @@ public class SwerveDrivePath extends CommandBase {
         Constants.kMaxAccelerationMetersPerSecondSquared)
             .setKinematics(Constants.m_kinematics);
 
-        xController = new PIDController(Constants.kPXController, 0, 0);
-        yController = new PIDController(Constants.kPYController, 0, 0);
+        xController = new PIDController(Constants.kPTranslationController, 0, Constants.kDTranslationController);
+        yController = new PIDController(Constants.kPTranslationController, 0, Constants.kDTranslationController);
 
         angleController = new ProfiledPIDController(
-            Constants.kPThetaController, 0, 0, Constants.kThetaControllerConstraints);
+            22, 0, 0, Constants.kThetaControllerConstraints);
     }
 
     @Override

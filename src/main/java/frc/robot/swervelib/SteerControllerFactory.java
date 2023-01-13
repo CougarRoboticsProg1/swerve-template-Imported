@@ -15,7 +15,7 @@ import frc.robot.swervelib.ctre.Falcon500SteerConfiguration;
 import static frc.robot.swervelib.ctre.CtreUtils.checkCtreError;
 
 public class SteerControllerFactory {
-    private final AbsoluteEncoderFactory<?> encoderFactory;
+    private final AbsoluteEncoderFactory encoderFactory;
     private static final int CAN_TIMEOUT_MS = 250;
     private static final int STATUS_FRAME_GENERAL_PERIOD_MS = 250;
 
@@ -34,7 +34,7 @@ public class SteerControllerFactory {
     private double nominalVoltage = Double.NaN;
     private double currentLimit = Double.NaN;
 
-    public SteerControllerFactory(AbsoluteEncoderFactory<?> encoderFactory) {
+    public SteerControllerFactory(AbsoluteEncoderFactory encoderFactory) {
         this.encoderFactory = encoderFactory;
     }
 

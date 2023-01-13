@@ -21,7 +21,7 @@ public class CanCoderFactoryBuilder {
         return this;
     }
 
-    public AbsoluteEncoderFactory<CanCoderAbsoluteConfiguration> build() {
+    public AbsoluteEncoderFactory build() {
         return configuration -> {
             CANCoderConfiguration config = new CANCoderConfiguration();
             config.absoluteSensorRange = AbsoluteSensorRange.Unsigned_0_to_360;
