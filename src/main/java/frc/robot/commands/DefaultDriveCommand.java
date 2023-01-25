@@ -43,7 +43,6 @@ public class DefaultDriveCommand extends CommandBase {
 
     @Override
     public void execute() {
-        // You can use `new ChassisSpeeds(...)` for robot-oriented movement instead of field-oriented movement
         if(m_fieldRelativeSupplier.getAsBoolean()) {
             isFieldRelative = !isFieldRelative;
         }
@@ -55,7 +54,6 @@ public class DefaultDriveCommand extends CommandBase {
         }
         SmartDashboard.putBoolean("isFieldRelative", isFieldRelative);
         if(m_brakeSupplier.getAsDouble() == 0) {
-            // m_drivetrainSubsystem.setRobotIdleMode(IdleMode.kCoast);
             if(isFieldRelative) {
                 m_drivetrainSubsystem.drive(
                     ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -73,8 +71,7 @@ public class DefaultDriveCommand extends CommandBase {
                     m_rotationSupplier.getAsDouble()));
             }
         } else {
-        //    m_drivetrainSubsystem.setRobotIdleMode(IdleMode.kBrake);
-           m_drivetrainSubsystem.drive(new ChassisSpeeds(0, 0, 0));
+           m_drivetrainSubsystem.stop();
         }
         
         

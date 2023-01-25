@@ -6,15 +6,17 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import org.ejml.interfaces.decomposition.CholeskySparseDecomposition;
+
 import frc.robot.Constants;
 import frc.robot.utils.*;
 import frc.robot.swervelib.SwerveModule;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -44,6 +46,12 @@ public class SwerveSubsystem extends SubsystemBase {
 	private final SwerveModule m_backRightModule;
 
 	private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds();
+
+	private PIDController driftCorrectionPID = new PIDController(4
+	, 0, 0);
+	private double XY = 0;
+	private double pXY = 0;
+	private double desiredHeading = 0;
 
 	private static SwerveSubsystem instance = null;
 	private SwerveSubsystem() {
@@ -92,7 +100,7 @@ public class SwerveSubsystem extends SubsystemBase {
 				FRONT_LEFT_MODULE_STEER_OFFSET, 0.5, 
 				0, 
 				5);
-		setRobotRampRate(0.5);
+		setRobotRampRate(0.0);
 		setRobotIdleMode(IdleMode.kBrake);
 	}
 
@@ -194,9 +202,10 @@ public class SwerveSubsystem extends SubsystemBase {
 			}
 		}
 		SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
-		m_frontLeftModule.set((states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE)
-			,
+
+		m_frontLeftModule.set((states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE),
 			states[0].angle.getRadians());
+	
 		m_frontRightModule.set((states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE)
 			,
 			states[1].angle.getRadians());
@@ -211,9 +220,23 @@ public class SwerveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		m_odometer.update(getGyroscopeRotation(), m_frontLeftModule.getState(), m_frontRightModule.getState(),
-				m_backLeftModule.getState(), m_backRightModule.getState());
-		SmartDashboard.putString("Robot Pose", getPose().toString());
+		m_backLeftModule.getState(), m_backRightModule.getState());
+		// SmartDashboard.putNumber("Pitch Value", m_navx2.getPitch());
+		// SmartDashboard.putNumber("Roll Value", m_navx2.getRoll());
+		// SmartDashboard.putString("Robot Pose", getPose().toString());
+		// SmartDashboard.putNumber("Gyro Reading", getGyroscopeRotation().getDegrees());
+
+		// Drift correction code
+		XY = Math.abs(m_chassisSpeeds.vxMetersPerSecond) + Math.abs(m_chassisSpeeds.vyMetersPerSecond);
+		if (Math.abs(m_chassisSpeeds.omegaRadiansPerSecond) > 0.0 || pXY <= 0) {
+			desiredHeading = getGyroscopeRotation().getDegrees();
+		} else if(XY > 0) {
+			m_chassisSpeeds.omegaRadiansPerSecond += driftCorrectionPID.calculate(getGyroscopeRotation().getDegrees(), desiredHeading);
+		}
+		pXY = XY;
+
 		SwerveModuleState[] states = m_kinematics.toSwerveModuleStates(m_chassisSpeeds);
+
 		setModuleStates(states);
 	}
 

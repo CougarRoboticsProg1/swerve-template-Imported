@@ -24,10 +24,10 @@ public class SwerveDrivePath extends CommandBase {
 
     private TrajectoryConfig trajectoryConfig;
     private Trajectory trajectory;
-    PIDController xController; 
-    PIDController yController;
-    ProfiledPIDController angleController;
-    SwerveControllerCommand swerveControllerCommand;
+    private PIDController xController; 
+    private PIDController yController;
+    private ProfiledPIDController angleController;
+    private SwerveControllerCommand swerveControllerCommand;
 
     public SwerveDrivePath(SwerveSubsystem drivetrain, double startAngle, double endAngle, List<Translation2d> wayPoints) {
         this.drivetrain = drivetrain;
@@ -48,22 +48,24 @@ public class SwerveDrivePath extends CommandBase {
         wayPoints.remove(wayPoints.size()-1);
 
         trajectoryConfig = new TrajectoryConfig(
-        Constants.MAX_VELOCITY_METERS_PER_SECOND,
-        Constants.kMaxAccelerationMetersPerSecondSquared)
+        Constants.MAX_VELOCITY_METERS_PER_SECOND / 3,
+        Constants.kMaxAngularAccelerationRadiansPerSecondSquared)
             .setKinematics(Constants.m_kinematics);
 
-        xController = new PIDController(Constants.kPTranslationController, 0, Constants.kDTranslationController);
-        yController = new PIDController(Constants.kPTranslationController, 0, Constants.kDTranslationController);
+        xController = new PIDController(Constants.kPTranslationController, 0, Constants.kDTranslationController 
+        );
+        yController = new PIDController(Constants.kPTranslationController, 0, Constants.kDTranslationController
+        );
 
         angleController = new ProfiledPIDController(
-            22, 0, 0, Constants.kThetaControllerConstraints);
+            21, 0, 0, Constants.kThetaControllerConstraints);
     }
 
     @Override
     public void initialize() {
-        drivetrain.resetOdometry();
         drivetrain.zeroGyroscope();
-
+        drivetrain.resetOdometry();
+        
         trajectory = TrajectoryGenerator.generateTrajectory(
             startPose,
             wayPoints,

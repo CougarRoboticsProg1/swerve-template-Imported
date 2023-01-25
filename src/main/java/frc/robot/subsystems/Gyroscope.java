@@ -46,8 +46,6 @@ public class Gyroscope extends SubsystemBase {
     navX.reset();
     zeroHeading = getNavHeading();
     zeroAngle = getNavAngle();
-    System.out.println("ZeroHeading: " + zeroHeading);
-    System.out.println("ZeroAngle: " + zeroAngle);  
   }
 
   public double getZeroHeading(){
@@ -56,6 +54,14 @@ public class Gyroscope extends SubsystemBase {
 
   public double getZeroAngle(){
     return zeroAngle;
+  }
+
+  public double getPitch() {
+    return navX.getPitch();
+  }
+
+  public double getRoll() {
+    return navX.getRoll();
   }
 
   public Rotation2d getNavXRotation2D(){

@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.SwerveSubsystem;
 import frc.robot.utils.HolonomicDriveController;
@@ -44,6 +45,7 @@ public class SwerveControllerCommand extends CommandBase {
   private final HolonomicDriveController m_controller;
   private final Consumer<SwerveModuleState[]> m_outputModuleStates;
   private final Supplier<Rotation2d> m_desiredRotation;
+  private final SwerveSubsystem m_swerveSubsystem;
 
   /**
    * Constructs a new SwerveControllerCommand that when executed will follow the provided
@@ -92,6 +94,9 @@ public class SwerveControllerCommand extends CommandBase {
     m_desiredRotation =
         requireNonNullParam(desiredRotation, "desiredRotation", "SwerveControllerCommand");
 
+    m_swerveSubsystem = 
+        requireNonNullParam(swerveDrivetrain, "swerveSubsystem", "SwerveControllerCommand");
+    
     addRequirements(swerveDrivetrain);
   }
 
@@ -150,17 +155,21 @@ public class SwerveControllerCommand extends CommandBase {
   @Override
   @SuppressWarnings("LocalVariableName")
   public void execute() {
-    double curTime = m_timer.get();
-    var desiredState = m_trajectory.sample(curTime);
+    double currTime = m_timer.get();
+    var desiredState = m_trajectory.sample(currTime);
+    
 
     ChassisSpeeds targetChassisSpeeds =
         m_controller.calculate(m_pose.get(), desiredState, m_desiredRotation.get());
-    SwerveModuleState[] targetModuleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
+        m_swerveSubsystem.drive(targetChassisSpeeds);
 
-    // for (SwerveModuleState i : targetModuleStates) {
-    //   // System.out.println("speed: " + i.speedMetersPerSecond + " angle:" + i.angle.getDegrees());
-    // }
-    m_outputModuleStates.accept(targetModuleStates);
+    SmartDashboard.putNumber("X Velocity", targetChassisSpeeds.vxMetersPerSecond);
+    // SwerveModuleState[] targetModuleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
+
+    // // for (SwerveModuleState i : targetModuleStates) {
+    // //   System.out.println("speed: " + i.speedMetersPerSecond + " angle:" + i.angle.getDegrees());
+    // // }
+    // m_outputModuleStates.accept(targetModuleStates);
   }
 
   // @Override

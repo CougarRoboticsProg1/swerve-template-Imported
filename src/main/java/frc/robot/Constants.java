@@ -32,24 +32,24 @@ public final class Constants {
     public static final double DRIVETRAIN_WHEELBASE_METERS = Units.inchesToMeters(25.5); // FIXME Measure and set wheelbase
 
     public static final int FRONT_LEFT_MODULE_DRIVE_MOTOR = 1;
-    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 3; 
-    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 1;
-    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(177.626953125 + 1.494140625); 
+    public static final int FRONT_LEFT_MODULE_STEER_MOTOR = 2; 
+    public static final int FRONT_LEFT_MODULE_STEER_ENCODER = 3;
+    public static final double FRONT_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(267.71484375 + 180); 
 
     public static final int FRONT_RIGHT_MODULE_DRIVE_MOTOR = 8; 
-    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 2;
-    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 3;
-    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(269.12109375 - 1.93359375);
+    public static final int FRONT_RIGHT_MODULE_STEER_MOTOR = 3;
+    public static final int FRONT_RIGHT_MODULE_STEER_ENCODER = 1;
+    public static final double FRONT_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(179.384765625);
 
     public static final int BACK_LEFT_MODULE_DRIVE_MOTOR = 14;
     public static final int BACK_LEFT_MODULE_STEER_MOTOR = 4;
     public static final int BACK_LEFT_MODULE_STEER_ENCODER = 2; 
-    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(358.41796875 + 180 + 0.3515625);
+    public static final double BACK_LEFT_MODULE_STEER_OFFSET = -Math.toRadians(88.857421875);
 
     public static final int BACK_RIGHT_MODULE_DRIVE_MOTOR = 2;
     public static final int BACK_RIGHT_MODULE_STEER_MOTOR = 1;
     public static final int BACK_RIGHT_MODULE_STEER_ENCODER = 4;
-    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(240.54565429687497 + 2.4609375);
+    public static final double BACK_RIGHT_MODULE_STEER_OFFSET = -Math.toRadians(153.720703125);
 
     //Module Constants
     public static final double wheelDiameter = 0.10033;
@@ -95,11 +95,7 @@ public final class Constants {
     public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
 
     //Auto Constants
-    public static final double kMaxSpeedMetersPerSecond = kPhysicalMaxSpeedMetersPerSecond / 4;
-        public static final double kMaxAngularSpeedRadiansPerSecond = //
-                kPhysicalMaxAngularSpeedRadiansPerSecond / 10;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-        public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
+        public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 3;
         public static final double kPTranslationController = 320;
         public static final double kDTranslationController = 30;
         public static final double kPThetaController = 3;

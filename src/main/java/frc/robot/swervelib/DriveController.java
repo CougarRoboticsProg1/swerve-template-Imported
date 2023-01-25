@@ -30,6 +30,6 @@ public class DriveController {
     }
 
     public void setRampRate(double rate) {
-        motor.setOpenLoopRampRate(rate);
+        motor.setClosedLoopRampRate(rate);
     }
 }

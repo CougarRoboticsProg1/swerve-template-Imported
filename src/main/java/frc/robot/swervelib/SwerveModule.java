@@ -57,8 +57,13 @@ public class SwerveModule {
         return driveController.getVoltage();
     }
 
-    public double angleError(double targetAngle) {
-        double steerAngle = getSteerAngle();
+    public double getAngleError(double targetValue) {
+        double steerAngle = targetValue;
+        steerAngle %= (2.0 * Math.PI);
+        if (steerAngle < 0.0) {
+            steerAngle += 2.0 * Math.PI;
+        }
+
         double difference = steerAngle - getSteerAngle();
         // Change the target angle so the difference is in the range [-pi, pi) instead
         // of [0, 2pi)

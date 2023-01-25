@@ -31,9 +31,12 @@ import frc.robot.commands.TestPIDAuto;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a
+ * "declarative" paradigm, very little robot logic should actually be handled in
+ * the {@link Robot}
+ * periodic methods (other than the scheduler calls). Instead, the structure of
+ * the robot (including
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
@@ -53,43 +56,63 @@ public class RobotContainer {
     // Right stick X axis -> rotation
     registerAutoCommands();
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
-            m_drivetrainSubsystem,
-            () -> -modifyAxis(m_controller.getLeftY()) * Constants.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getLeftX()) * Constants.MAX_VELOCITY_METERS_PER_SECOND,
-            () -> -modifyAxis(m_controller.getRightX()) * Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
-            () -> m_controller.getYButton(),
-            () -> m_controller.getRightTriggerAxis(),
-            () -> m_controller.getRightBumper(),
-            () -> m_controller.getLeftBumper()
-    ));
+        m_drivetrainSubsystem,
+        () -> -modifyAxis(m_controller.getLeftY()) * Constants.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(m_controller.getLeftX()) * Constants.MAX_VELOCITY_METERS_PER_SECOND,
+        () -> -modifyAxis(m_controller.getRightX()) * Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+        () -> m_controller.getYButton(),
+        () -> m_controller.getRightTriggerAxis(),
+        () -> m_controller.getRightBumper(),
+        () -> m_controller.getLeftBumper()));
 
     // Configure the button bindings
     configureButtonBindings();
   }
 
+  public SwerveSubsystem getSwerveSubsystem() {
+    return m_drivetrainSubsystem;
+  }
+
   public Command getAutonomousCommand() {
     // 1. Create trajectory settings
     TrajectoryConfig trajectoryConfig = new TrajectoryConfig(
-        Constants.MAX_VELOCITY_METERS_PER_SECOND-20,
-        Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND)
-            .setKinematics(Constants.m_kinematics);
+        Constants.MAX_VELOCITY_METERS_PER_SECOND,
+        Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND).setKinematics(Constants.m_kinematics);
 
     // 2. Generate trajectory
+    // Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+    //     new Pose2d(0, 0, new Rotation2d(180)),
+    //     List.of(
+    //         new Translation2d(-1, 0)
+    //         ),
+    //     new Pose2d(-1.5, 0, Rotation2d.fromDegrees(0)),
+    //     trajectoryConfig);
+  
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d(0)),
+        new Pose2d(0, 0, new Rotation2d(180)),
         List.of(
-            new Translation2d(0.2, 0),
-            new Translation2d(0.4, 0),
-            new Translation2d(0.6, 0),
-            new Translation2d(0.8, 0)),
-        new Pose2d(1, 0, Rotation2d.fromDegrees(0)),
+            new Translation2d(-0.5, 0),
+            new Translation2d(-1, 0),
+            new Translation2d(-0.5, 0)
+            ),
+        new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
         trajectoryConfig);
 
+    // Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(
+    //     new Pose2d(-1.5, 0, new Rotation2d(360)),
+    //     List.of(
+    //         new Translation2d(-1, 0)
+    //         ),
+    //     new Pose2d(0, 0, Rotation2d.fromDegrees(360)),
+    //     trajectoryConfig);
+
+    //   trajectory.concatenate(trajectory2);
+
     // 3. Define PID controllers for tracking trajectory
-    PIDController xController = new PIDController(195, 0, 30);
-    PIDController yController = new PIDController(195, 0, 30);
+    PIDController xController = new PIDController(320, 0, 30);
+    PIDController yController = new PIDController(320, 0, 30);
     ProfiledPIDController thetaController = new ProfiledPIDController(
-        0.2, 0, 0, Constants.kThetaControllerConstraints);
+        21, 0, 0, Constants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     // 4. Construct command to follow trajectory
@@ -104,32 +127,32 @@ public class RobotContainer {
         m_drivetrainSubsystem);
 
     // 5. Add some init and wrap-up, and return everything
-    // return new SequentialCommandGroup(
-    //     new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry()),
-    //     swerveControllerCommand,
-    //     new InstantCommand(() -> m_drivetrainSubsystem.stop()));
-    return swerveControllerCommand;
+    return new SequentialCommandGroup(
+        new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry()),
+        swerveControllerCommand,
+        new InstantCommand(() -> m_drivetrainSubsystem.stop()));
   }
 
   /**
-   * Use this method to define your button->command mappings. Buttons can be created by
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by
    * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing
+   * it to a {@link
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    // new Button(m_controller:: getBButton).whenPressed(new SwerveAuto(m_drivetrainSubsystem, 6));
     // Back button zeros the gyroscope
-    new Button(m_controller::getYButton)
-            // No requirements because we don't need to interrupt anything
-            .whenPressed(m_drivetrainSubsystem::zeroGyroscope, m_drivetrainSubsystem);
-
-    new Button(m_controller:: getAButton).whileActiveContinuous(new TestPIDAuto(m_drivetrainSubsystem));
+    new Button(m_controller::getBButton)
+        // No requirements because we don't need to interrupt anything
+        .whenPressed(m_drivetrainSubsystem::zeroGyroscope, m_drivetrainSubsystem);
+    new Button(m_controller::getAButton).whileActiveContinuous(new TestPIDAuto(m_drivetrainSubsystem));
   }
 
   public CougarScriptReader getCougarScriptReader() {
     return reader;
   }
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -140,11 +163,11 @@ public class RobotContainer {
       double feetToMeters = 0.30478512648;
 
       Translation2d flippedXandY = new Translation2d(
-        startPose.getY() * feetToMeters, startPose.getX() * feetToMeters);
+          startPose.getY() * feetToMeters, startPose.getX() * feetToMeters);
 
       Rotation2d theta = new Rotation2d(
-        startPose.getRotation().getDegrees());
-      
+          startPose.getRotation().getDegrees());
+
       Pose2d transformedStartPose;
 
       transformedStartPose = new Pose2d(flippedXandY, theta);
@@ -152,11 +175,11 @@ public class RobotContainer {
     });
 
     reader.registerCommand("SwerveDrivePath", (CougarScriptObject p) -> {
-        List<Translation2d> wayPoints = p.getPointList("Waypoints");
-        return new SwerveDrivePath(m_drivetrainSubsystem, 
-        p.getDouble("StartAngle"), 
-        p.getDouble("EndAngle"), 
-        wayPoints);
+      List<Translation2d> wayPoints = p.getPointList("Waypoints");
+      return new SwerveDrivePath(m_drivetrainSubsystem,
+          p.getDouble("StartAngle"),
+          p.getDouble("EndAngle"),
+          wayPoints);
     });
   }
 
