@@ -38,7 +38,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
 	private final SwerveDriveOdometry m_odometer = new SwerveDriveOdometry(
 			Constants.m_kinematics,
-			getGyroscopeRotation());
+			new Rotation2d());
 
 	private final SwerveModule m_frontLeftModule;
 	private final SwerveModule m_frontRightModule;
@@ -47,8 +47,8 @@ public class SwerveSubsystem extends SubsystemBase {
 
 	private ChassisSpeeds m_chassisSpeeds = new ChassisSpeeds();
 
-	private PIDController driftCorrectionPID = new PIDController(4
-	, 0, 0);
+	private PIDController driftCorrectionPID = new PIDController(0.33
+	, 0, 0); /* I and D just make it worse */
 	private double XY = 0;
 	private double pXY = 0;
 	private double desiredHeading = 0;
@@ -102,6 +102,8 @@ public class SwerveSubsystem extends SubsystemBase {
 				5);
 		setRobotRampRate(0.0);
 		setRobotIdleMode(IdleMode.kBrake);
+		/* prevents a random turn when renabling the robot */
+		desiredHeading = getGyroscopeRotation().getDegrees();
 	}
 
 
@@ -147,6 +149,8 @@ public class SwerveSubsystem extends SubsystemBase {
 	 */
 	public void zeroGyroscope() {
 		m_navx2.zeroNavHeading();
+		desiredHeading = 0;
+		m_odometer.resetPosition(getPose(), getGyroscopeRotation());		
 	}
 
 	/**
@@ -177,13 +181,6 @@ public class SwerveSubsystem extends SubsystemBase {
 	}
 
 	public Rotation2d getGyroscopeRotation() {
-		// if (m_navx.isMagnetometerCalibrated()) {
-		// 	// We will only get valid fused headings if the magnetometer is calibrated
-		// 	return Rotation2d.fromDegrees(-m_navx.getFusedHeading());
-		// }
-		// // We have to invert the angle of the NavX so that rotating the robot
-		// // counter-clockwise makes the angle increase.
-		// return Rotation2d.fromDegrees(360.0 - m_navx.getYaw());
 		return m_navx2.getRotation2d();
 	}
 
@@ -203,35 +200,32 @@ public class SwerveSubsystem extends SubsystemBase {
 		}
 		SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
-		m_frontLeftModule.set((states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE),
+		m_frontLeftModule.set((states[0].speedMetersPerSecond / Constants.MAX_VELOCITY_METERS_PER_SECOND),
 			states[0].angle.getRadians());
-	
-		m_frontRightModule.set((states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE)
-			,
+		m_frontRightModule.set((states[1].speedMetersPerSecond / Constants.MAX_VELOCITY_METERS_PER_SECOND),
 			states[1].angle.getRadians());
-		m_backLeftModule.set((states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE)
-			,
+		m_backLeftModule.set((states[2].speedMetersPerSecond / Constants.MAX_VELOCITY_METERS_PER_SECOND),
 			states[2].angle.getRadians());
-		m_backRightModule.set((states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND * MAX_VOLTAGE)
-			,
+		m_backRightModule.set((states[3].speedMetersPerSecond / Constants.MAX_VELOCITY_METERS_PER_SECOND),
 			states[3].angle.getRadians());
 	  }
 
 	@Override
 	public void periodic() {
+		SmartDashboard.putNumber("Gyro Reading", getGyroscopeRotation().getDegrees());
 		m_odometer.update(getGyroscopeRotation(), m_frontLeftModule.getState(), m_frontRightModule.getState(),
 		m_backLeftModule.getState(), m_backRightModule.getState());
-		// SmartDashboard.putNumber("Pitch Value", m_navx2.getPitch());
-		// SmartDashboard.putNumber("Roll Value", m_navx2.getRoll());
-		// SmartDashboard.putString("Robot Pose", getPose().toString());
-		// SmartDashboard.putNumber("Gyro Reading", getGyroscopeRotation().getDegrees());
+		SmartDashboard.putString("Odometry", m_odometer.getPoseMeters().toString());
 
 		// Drift correction code
-		XY = Math.abs(m_chassisSpeeds.vxMetersPerSecond) + Math.abs(m_chassisSpeeds.vyMetersPerSecond);
-		if (Math.abs(m_chassisSpeeds.omegaRadiansPerSecond) > 0.0 || pXY <= 0) {
+		XY = Math.abs(m_frontLeftModule.getDriveVelocity());
+		if (Math.abs(m_navx2.getRate()) > 0.2) {
 			desiredHeading = getGyroscopeRotation().getDegrees();
 		} else if(XY > 0) {
-			m_chassisSpeeds.omegaRadiansPerSecond += driftCorrectionPID.calculate(getGyroscopeRotation().getDegrees(), desiredHeading);
+			double calc = driftCorrectionPID.calculate(getGyroscopeRotation().getDegrees(), desiredHeading);
+			if(Math.abs(calc) >= 0.55) {
+				m_chassisSpeeds.omegaRadiansPerSecond += calc;
+			}
 		}
 		pXY = XY;
 

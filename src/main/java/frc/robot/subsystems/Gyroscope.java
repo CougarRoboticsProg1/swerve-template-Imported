@@ -64,8 +64,16 @@ public class Gyroscope extends SubsystemBase {
     return navX.getRoll();
   }
 
+  public double getRate() {
+    return navX.getRate();
+  }
+
   public Rotation2d getNavXRotation2D(){
     return Rotation2d.fromDegrees(navX.getAngle());
+  }
+
+  public double getTemp() {
+    return navX.getTempC();
   }
 
     /*

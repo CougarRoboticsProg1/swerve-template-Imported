@@ -58,7 +58,7 @@ public class SwerveDrivePath extends CommandBase {
         );
 
         angleController = new ProfiledPIDController(
-            21, 0, 0, Constants.kThetaControllerConstraints);
+            0, 0, 0, Constants.kThetaControllerConstraints);
     }
 
     @Override

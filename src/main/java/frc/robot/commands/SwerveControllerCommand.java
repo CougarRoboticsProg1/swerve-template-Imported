@@ -14,6 +14,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -157,13 +158,14 @@ public class SwerveControllerCommand extends CommandBase {
   public void execute() {
     double currTime = m_timer.get();
     var desiredState = m_trajectory.sample(currTime);
-    
 
     ChassisSpeeds targetChassisSpeeds =
         m_controller.calculate(m_pose.get(), desiredState, m_desiredRotation.get());
-        m_swerveSubsystem.drive(targetChassisSpeeds);
 
-    SmartDashboard.putNumber("X Velocity", targetChassisSpeeds.vxMetersPerSecond);
+    m_swerveSubsystem.drive(targetChassisSpeeds);
+
+    SmartDashboard.putNumber("Pose Error", Math.sqrt(Math.pow((m_pose.get().getX() - desiredState.poseMeters.getX()), 2) + Math.pow((m_pose.get().getY() - desiredState.poseMeters.getY()), 2)));
+
     // SwerveModuleState[] targetModuleStates = m_kinematics.toSwerveModuleStates(targetChassisSpeeds);
 
     // // for (SwerveModuleState i : targetModuleStates) {
@@ -172,13 +174,15 @@ public class SwerveControllerCommand extends CommandBase {
     // m_outputModuleStates.accept(targetModuleStates);
   }
 
-  // @Override
-  // public void end(boolean interrupted) {
-  //   m_timer.stop();
-  // }
+  @Override
+  public void end(boolean interrupted) {
+    System.out.println("End: " + m_timer.get());
+    m_timer.stop();
+  }
 
-  // @Override
-  // public boolean isFinished() {
-  //   return m_timer.hasElapsed(m_trajectory.getTotalTimeSeconds());
-  // }
+  @Override
+  public boolean isFinished() {
+    System.out.println("IsFinished: " + m_timer.get());
+    return m_timer.hasElapsed(m_trajectory.getTotalTimeSeconds());
+  }
 }

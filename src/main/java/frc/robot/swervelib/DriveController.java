@@ -4,6 +4,8 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 
+import frc.robot.Constants;
+
 public class DriveController {
     private final CANSparkMax motor;
     private final RelativeEncoder encoder;
@@ -15,6 +17,11 @@ public class DriveController {
 
     public void setReferenceVoltage(double voltage) {
         motor.setVoltage(voltage);
+    }
+
+    public void setReferenceVelocity(double velocity) {
+        motor.set(velocity);
+
     }
 
     public double getVoltage() {

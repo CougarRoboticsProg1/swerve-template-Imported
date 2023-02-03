@@ -7,6 +7,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.SwerveSubsystem;
@@ -14,7 +15,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class TestPIDAuto extends CommandBase {
 
     private final SwerveSubsystem drivetrain;
-    private final ProfiledPIDController controller;
+    private final PIDController controller;
     private double controllerCalculate;
     private ShuffleboardTab tab = Shuffleboard.getTab("Drive Tank PID");
 
@@ -43,7 +44,7 @@ public class TestPIDAuto extends CommandBase {
             .withWidget(BuiltInWidgets.kTextView)
             .getEntry();
         
-        controller = new ProfiledPIDController(0, 0, 0, Constants.kThetaControllerConstraints);
+        controller = new PIDController(0, 0, 0);
     }
 
     @Override
@@ -52,10 +53,10 @@ public class TestPIDAuto extends CommandBase {
         controller.setI(kI.getDouble(0));
         controller.setD(kD.getDouble(0));
 
-        controllerCalculate = controller.calculate(drivetrain.getGyroscopeRotation().getDegrees(), setPoint.getDouble(0));
-        System.out.println(controllerCalculate);
+        controllerCalculate = controller.calculate(drivetrain.getPose().getRotation().getDegrees(), setPoint.getDouble(0));
+        SmartDashboard.putString("Pose", drivetrain.getPose().toString());
 
         drivetrain.drive(
-            new ChassisSpeeds(0, 0, controllerCalculate));
+            new ChassisSpeeds(0,0, controllerCalculate));
     }
 }

@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.SwerveSubsystem;
 
 import java.util.function.BooleanSupplier;
@@ -43,6 +44,7 @@ public class DefaultDriveCommand extends CommandBase {
 
     @Override
     public void execute() {
+        SmartDashboard.putNumber("Axis", m_translationYSupplier.getAsDouble());
         if(m_fieldRelativeSupplier.getAsBoolean()) {
             isFieldRelative = !isFieldRelative;
         }
@@ -53,26 +55,22 @@ public class DefaultDriveCommand extends CommandBase {
             SwerveSubsystem.decreaseVoltage();
         }
         SmartDashboard.putBoolean("isFieldRelative", isFieldRelative);
-        if(m_brakeSupplier.getAsDouble() == 0) {
             if(isFieldRelative) {
                 m_drivetrainSubsystem.drive(
                     ChassisSpeeds.fromFieldRelativeSpeeds(
-                            m_translationXSupplier.getAsDouble(),
-                            m_translationYSupplier.getAsDouble(),
-                            m_rotationSupplier.getAsDouble(),
+                            m_translationXSupplier.getAsDouble() * Constants.MAX_VELOCITY_METERS_PER_SECOND,
+                            m_translationYSupplier.getAsDouble() * Constants.MAX_VELOCITY_METERS_PER_SECOND,
+                            m_rotationSupplier.getAsDouble() * Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
                             m_drivetrainSubsystem.getGyroscopeRotation()
                     )
                 );
             } else {
                 m_drivetrainSubsystem.drive(
                 new ChassisSpeeds(
-                    m_translationXSupplier.getAsDouble(),
-                    m_translationYSupplier.getAsDouble(), 
-                    m_rotationSupplier.getAsDouble()));
+                    m_translationXSupplier.getAsDouble() * Constants.MAX_VELOCITY_METERS_PER_SECOND,
+                    m_translationYSupplier.getAsDouble() * Constants.MAX_VELOCITY_METERS_PER_SECOND, 
+                    m_rotationSupplier.getAsDouble() * Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND));
             }
-        } else {
-           m_drivetrainSubsystem.stop();
-        }
         
         
     }

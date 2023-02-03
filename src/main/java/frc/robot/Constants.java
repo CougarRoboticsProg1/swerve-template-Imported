@@ -69,15 +69,15 @@ public final class Constants {
    * <p>
    * This is a measure of how fast the robot should be able to drive in a straight line.
    */
-  public static final double MAX_VELOCITY_METERS_PER_SECOND = 5880.0 / 60.0 / driveReduction * wheelDiameter * Math.PI;
+  public static final double MAX_VELOCITY_METERS_PER_SECOND = 6;
   /**
    * The maximum angular velocity of the robot in radians per second.
    * <p>
    * This is a measure of how fast the robot can rotate in place.
    */
   // Here we calculate the theoretical maximum angular velocity. You can also replace this with a measured amount.
-  public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = MAX_VELOCITY_METERS_PER_SECOND /
-          Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0);
+  public static final double MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND = (MAX_VELOCITY_METERS_PER_SECOND /
+          Math.hypot(DRIVETRAIN_TRACKWIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0) ) ;
 
   public static final SwerveDriveKinematics m_kinematics = new SwerveDriveKinematics(
           // Front left
@@ -96,8 +96,8 @@ public final class Constants {
 
     //Auto Constants
         public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 3;
-        public static final double kPTranslationController = 320;
-        public static final double kDTranslationController = 30;
+        public static final double kPTranslationController = 2.8;
+        public static final double kDTranslationController = 0.2;
         public static final double kPThetaController = 3;
 
         public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //

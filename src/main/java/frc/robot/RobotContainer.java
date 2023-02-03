@@ -57,9 +57,9 @@ public class RobotContainer {
     registerAutoCommands();
     m_drivetrainSubsystem.setDefaultCommand(new DefaultDriveCommand(
         m_drivetrainSubsystem,
-        () -> -modifyAxis(m_controller.getLeftY()) * Constants.MAX_VELOCITY_METERS_PER_SECOND,
-        () -> -modifyAxis(m_controller.getLeftX()) * Constants.MAX_VELOCITY_METERS_PER_SECOND,
-        () -> -modifyAxis(m_controller.getRightX()) * Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND,
+        () -> -modifyAxis(m_controller.getLeftY()),
+        () -> -modifyAxis(m_controller.getLeftX()),
+        () -> -modifyAxis(m_controller.getRightX()),
         () -> m_controller.getYButton(),
         () -> m_controller.getRightTriggerAxis(),
         () -> m_controller.getRightBumper(),
@@ -79,40 +79,21 @@ public class RobotContainer {
         Constants.MAX_VELOCITY_METERS_PER_SECOND,
         Constants.MAX_ANGULAR_VELOCITY_RADIANS_PER_SECOND).setKinematics(Constants.m_kinematics);
 
-    // 2. Generate trajectory
-    // Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-    //     new Pose2d(0, 0, new Rotation2d(180)),
-    //     List.of(
-    //         new Translation2d(-1, 0)
-    //         ),
-    //     new Pose2d(-1.5, 0, Rotation2d.fromDegrees(0)),
-    //     trajectoryConfig);
-  
+        // 2. Generate trajectory
     Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d(180)),
+        new Pose2d(0, 0, new Rotation2d(0)),
         List.of(
-            new Translation2d(-0.5, 0),
-            new Translation2d(-1, 0),
-            new Translation2d(-0.5, 0)
+            new Translation2d(0.5, 0)
             ),
-        new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+        new Pose2d(1, 0, Rotation2d.fromDegrees(90)),
         trajectoryConfig);
 
-    // Trajectory trajectory2 = TrajectoryGenerator.generateTrajectory(
-    //     new Pose2d(-1.5, 0, new Rotation2d(360)),
-    //     List.of(
-    //         new Translation2d(-1, 0)
-    //         ),
-    //     new Pose2d(0, 0, Rotation2d.fromDegrees(360)),
-    //     trajectoryConfig);
-
-    //   trajectory.concatenate(trajectory2);
-
+      System.out.println("States: " + trajectory.getStates());
     // 3. Define PID controllers for tracking trajectory
-    PIDController xController = new PIDController(320, 0, 30);
-    PIDController yController = new PIDController(320, 0, 30);
+    PIDController xController = new PIDController(2.0, 0.025, 0.2);
+    PIDController yController = new PIDController(2.0, 0.025, 0.2);
     ProfiledPIDController thetaController = new ProfiledPIDController(
-        21, 0, 0, Constants.kThetaControllerConstraints);
+        0.1, 0, 0, Constants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     // 4. Construct command to follow trajectory
@@ -127,10 +108,11 @@ public class RobotContainer {
         m_drivetrainSubsystem);
 
     // 5. Add some init and wrap-up, and return everything
-    return new SequentialCommandGroup(
-        new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry()),
-        swerveControllerCommand,
-        new InstantCommand(() -> m_drivetrainSubsystem.stop()));
+    // return new SequentialCommandGroup(
+    //     new InstantCommand(() -> m_drivetrainSubsystem.resetOdometry()),
+    //     swerveControllerCommand,
+    //     new InstantCommand(() -> m_drivetrainSubsystem.stop()));
+    return swerveControllerCommand;
   }
 
   /**
